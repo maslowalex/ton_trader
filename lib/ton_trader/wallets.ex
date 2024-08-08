@@ -30,7 +30,8 @@ defmodule TonTrader.Wallets do
         raw_address: a,
         keypair: keypair,
         wallet: wallet,
-        pretty_address: credentials.pretty_address
+        pretty_address: credentials.pretty_address,
+        seqno: credentials.seqno
       }
 
       {:ok, wallet}
@@ -60,37 +61,10 @@ defmodule TonTrader.Wallets do
       raw_address: Ton.wallet_to_raw_address(wallet),
       keypair: keypair,
       wallet: wallet,
-      pretty_address: Ton.wallet_to_friendly_address(wallet)
+      pretty_address: Ton.wallet_to_friendly_address(wallet),
+      seqno: 0
     }
 
     struct!(Wallet, attrs)
-  end
-
-  def dummy_transfer(r) do
-    {:ok, to_address} = Ton.parse_address("UQBr5PE1trssjEIjZuVyNf57Lyb-7Hcwi51d0ImdTqGAD7mU")
-
-    params = [
-      seqno: 0,
-      bounce: true,
-      secret_key: r.keypair.secret_key,
-      value: 10,
-      to_address: to_address,
-      timeout: 60,
-      comment: "blat"
-    ]
-
-    Ton.create_transfer_boc(r.wallet, params)
-    |> Base.encode64()
-    |> send_boc_request()
-    |> Finch.request(TonTrader.Finch)
-  end
-
-  defp send_boc_request(boc) do
-    Finch.build(
-      :post,
-      "https://toncenter.com/api/v2/sendBoc",
-      [{"Content-Type", "application/json"}, {"accept", "application/json"}],
-      Jason.encode!(%{boc: boc})
-    )
   end
 end
