@@ -17,7 +17,9 @@ defmodule TonTrader.Transfers do
         {:ok, Jason.decode!(body)}
 
       {:ok, %{status: status, body: body}} ->
-        {:error, status, Jason.decode!(body)}
+        error = body |> Jason.decode!() |> build_transfer_error()
+
+        {:error, status, error}
 
       {:error, reason} ->
         {:error, reason}
@@ -38,5 +40,15 @@ defmodule TonTrader.Transfers do
       timeout: timeout,
       comment: comment
     ]
+  end
+
+  def build_transfer_error(%{"error" => error}) do
+    cond do
+      String.contains?(error, "exitcode=33") ->
+        :invalid_seqno
+
+      true ->
+        {:unknown_error, error}
+    end
   end
 end

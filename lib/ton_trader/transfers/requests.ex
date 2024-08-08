@@ -1,6 +1,8 @@
 defmodule TonTrader.Transfers.Requests do
   @moduledoc false
 
+  alias TonTrader.Wallets.Wallet
+
   def send_boc(boc) when is_binary(boc) do
     Finch.build(
       :post,

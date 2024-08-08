@@ -3,10 +3,14 @@ defmodule TonTrader.Wallets do
   This module is responsible for managing the wallets.
   """
 
+  import Ecto.Query, only: [from: 2, where: 2]
+
   alias TonTrader.Repo
 
   alias TonTrader.Wallets.Wallet
   alias TonTrader.Wallets.WalletCredentials
+
+  alias TonTrader.Wallets.Requests
 
   @doc """
   Creates a new wallet and inserts the details of restoring it into the database.
@@ -16,6 +20,13 @@ defmodule TonTrader.Wallets do
          {:ok, credentials} <- insert_wallet_credentials(wallet) do
       {:ok, %{wallet: wallet, credentials: credentials}}
     end
+  end
+
+  @doc """
+  Imports wallet from seed phrase.
+  """
+  def import_from_mnemonic(mnemonic) do
+    do_create_wallet(mnemonic)
   end
 
   @doc """
@@ -51,8 +62,33 @@ defmodule TonTrader.Wallets do
     |> Repo.insert()
   end
 
-  defp do_create_wallet() do
-    mnemonic = Ton.generate_mnemonic()
+  def sync_seqno(%Wallet{seqno: actual_seqno, pretty_address: address} = wallet) do
+    address
+    |> Requests.get_seqno()
+    |> Finch.request(TonTrader.Finch)
+    |> case do
+      {:ok, %{status: 200, body: body}} ->
+        do_sync_seqno(wallet, body)
+
+      {:ok, %{status: status, body: body}} ->
+        {:error, status, body}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  def update_credentials_seqno(raw_address, new_seqno) do
+    {1, _} =
+      Repo.update_all(
+        from(w in WalletCredentials, where: w.address == ^raw_address),
+        set: [seqno: new_seqno]
+      )
+
+    :ok
+  end
+
+  defp do_create_wallet(mnemonic \\ Ton.generate_mnemonic()) do
     keypair = Ton.mnemonic_to_keypair(mnemonic)
     wallet = Ton.create_wallet(keypair.public_key)
 
@@ -66,5 +102,20 @@ defmodule TonTrader.Wallets do
     }
 
     struct!(Wallet, attrs)
+  end
+
+  defp do_sync_seqno(%Wallet{seqno: seqno} = wallet, successful_response_body) do
+    case Requests.parse_seqno_result(Jason.decode!(successful_response_body)) do
+      {:ok, ^seqno} ->
+        {:ok, wallet}
+
+      {:ok, new_seqno} ->
+        :ok = update_credentials_seqno(wallet.raw_address, new_seqno)
+
+        {:ok, %{wallet | seqno: new_seqno}}
+
+      error ->
+        error
+    end
   end
 end

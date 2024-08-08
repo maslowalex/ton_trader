@@ -20,3 +20,11 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 ```elixir
 TonTrader.Transfers.transfer(wallet, "UQCWrFEjv3IDTnflpr1G3xIrgiZ9gMpO9OWezVp3P1Gm-So4", 1)
 ```
+
+## Parse from txt file
+
+```elixir
+mnemonic = File.read!("mnemonic.txt") |> String.trim() |> String.split("\n ") |> Enum.map(&String.trim/1) |> Enum.join(" ")
+
+wallet = TonTrader.Wallets.import_from_mnemonic(mnemonic)
+```
