@@ -3,7 +3,7 @@ defmodule TonTrader.Wallets do
   This module is responsible for managing the wallets.
   """
 
-  import Ecto.Query, only: [from: 2, where: 2]
+  import Ecto.Query, only: [from: 2]
 
   alias TonTrader.Repo
 
@@ -11,6 +11,23 @@ defmodule TonTrader.Wallets do
   alias TonTrader.Wallets.WalletCredentials
 
   alias TonTrader.Wallets.Requests
+
+  @doc """
+  Return all existing wallets from database (derived from stored credentials).
+  """
+  def get_all() do
+    WalletCredentials
+    |> Repo.all()
+    |> Enum.map(fn cred ->
+      case restore_wallet(cred) do
+        {:ok, wallet} ->
+          wallet
+
+        error ->
+          raise "Failed to restore wallet: #{inspect(error)}"
+      end
+    end)
+  end
 
   @doc """
   Creates a new wallet and inserts the details of restoring it into the database.
@@ -62,7 +79,7 @@ defmodule TonTrader.Wallets do
     |> Repo.insert()
   end
 
-  def sync_seqno(%Wallet{seqno: actual_seqno, pretty_address: address} = wallet) do
+  def sync_seqno(%Wallet{pretty_address: address} = wallet) do
     address
     |> Requests.get_seqno()
     |> Finch.request(TonTrader.Finch)

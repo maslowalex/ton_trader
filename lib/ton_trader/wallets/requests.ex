@@ -1,5 +1,5 @@
 defmodule TonTrader.Wallets.Requests do
-  alias TonTrader.Wallets
+  @moduledoc false
 
   def get_seqno(pretty_address) when is_binary(pretty_address) do
     Finch.build(
