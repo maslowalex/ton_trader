@@ -28,3 +28,7 @@ mnemonic = File.read!("mnemonic.txt") |> String.trim() |> String.split("\n ") |>
 
 wallet = TonTrader.Wallets.import_from_mnemonic(mnemonic)
 ```
+
+## TODO
+- Jettons transfer
+- Transactions observer

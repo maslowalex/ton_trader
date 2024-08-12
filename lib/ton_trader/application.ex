@@ -17,7 +17,8 @@ defmodule TonTrader.Application do
       # Start a worker by calling: TonTrader.Worker.start_link(arg)
       # {TonTrader.Worker, arg},
       # Start to serve requests, typically the last entry
-      TonTraderWeb.Endpoint
+      TonTraderWeb.Endpoint,
+      TonTrader.RateLimiter
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

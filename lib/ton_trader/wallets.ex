@@ -82,7 +82,7 @@ defmodule TonTrader.Wallets do
   def sync_seqno(%Wallet{pretty_address: address} = wallet) do
     address
     |> Requests.get_seqno()
-    |> Finch.request(TonTrader.Finch)
+    |> TonTrader.RateLimiter.request()
     |> case do
       {:ok, %{status: 200, body: body}} ->
         do_sync_seqno(wallet, body)
@@ -103,6 +103,13 @@ defmodule TonTrader.Wallets do
       )
 
     :ok
+  end
+
+  def prepare_for_transfer(%Wallet{} = wallet) do
+    with {:ok, wallet} <- sync_seqno(wallet),
+         {:ok, wallet} <- TonTrader.Transfers.sync_balance(wallet) do
+      wallet
+    end
   end
 
   defp do_create_wallet(mnemonic \\ Ton.generate_mnemonic()) do

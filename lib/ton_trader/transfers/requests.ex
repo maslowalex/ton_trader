@@ -9,4 +9,12 @@ defmodule TonTrader.Transfers.Requests do
       Jason.encode!(%{boc: boc})
     )
   end
+
+  def get_balance(pretty_address) when is_binary(pretty_address) do
+    Finch.build(
+      :get,
+      "https://toncenter.com/api/v2/getAddressBalance?address=#{pretty_address}",
+      [{"accept", "application/json"}]
+    )
+  end
 end

@@ -1,0 +1,26 @@
+iex(91)> TonTrader.Transfers.Mixing.start_link(plan)
+[notice] Transferring 78117121 from EQAEh0cI99uWEIiE0O-qT5jGQMbf3nGysFIL5mJr2Q9ACeR3 to EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj
+{:ok, #PID<0.648.0>}
+[notice] Transfer completed successfully
+[notice] Transferring 78117121 from EQAEh0cI99uWEIiE0O-qT5jGQMbf3nGysFIL5mJr2Q9ACeR3 to EQBF2luC8Y7Oovq7Um4h1BbwBt2hLi9RqhkpopPXZJ22vwNo
+[notice] Transfer completed successfully
+[notice] Transferring 78117121 from EQAEh0cI99uWEIiE0O-qT5jGQMbf3nGysFIL5mJr2Q9ACeR3 to EQA95jz44dx3thnpOtgTt6-joZV4WxW8nZJUTJ7kNTSlxrU4
+[notice] Transfer completed successfully
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
+[notice] Transferring 78117021 from EQBdPBKA8eLvH9Pvj6UnCIMNi2svJVc0eZ7013A0SVZ2IyRj to UQBt1y-4gtQNmUjUYC-5TURrxIfApxBP-W85OAbogVmSBM5F
+[warning] Failed to unpack account state, retrying in 3 seconds
