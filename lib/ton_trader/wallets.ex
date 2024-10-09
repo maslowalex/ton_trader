@@ -24,7 +24,7 @@ defmodule TonTrader.Wallets do
           wallet
 
         error ->
-          raise "Failed to restore wallet: #{inspect(error)}"
+          error
       end
     end)
   end
@@ -65,7 +65,9 @@ defmodule TonTrader.Wallets do
       {:ok, wallet}
     else
       v ->
-        {:error, :invalid_credentials, v}
+        # Ecto.Adapters.SQL.query(Repo, "DELETE FROM wallet_credentials WHERE address = $1", [a])
+
+        {:error, :invalid_credentials}
     end
   end
 
@@ -103,6 +105,18 @@ defmodule TonTrader.Wallets do
       )
 
     :ok
+  end
+
+  def prepare_for_transfer([%Wallet{} | _] = wallets) do
+    Enum.reduce(wallets, [], fn wallet, acc ->
+      case prepare_for_transfer(wallet) do
+        %Wallet{} = wallet ->
+          [wallet | acc]
+
+        _ ->
+          acc
+      end
+    end)
   end
 
   def prepare_for_transfer(%Wallet{} = wallet) do

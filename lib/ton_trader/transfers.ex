@@ -48,7 +48,7 @@ defmodule TonTrader.Transfers do
 
     [
       seqno: from_wallet.seqno,
-      bounce: false,
+      bounce: true,
       secret_key: from_wallet.keypair.secret_key,
       to_address: to_address,
       value: amount,

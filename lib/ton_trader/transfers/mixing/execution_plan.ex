@@ -14,7 +14,11 @@ defmodule TonTrader.Transfers.Mixing.ExecutionPlan do
     to_intermediaries_transfer =
       data.intermediaries
       |> Enum.map(fn intermediary ->
-        %{from: data.origin_wallet, to: intermediary.pretty_address, amount: per_intermediary_transfer_amount - estimated_gas_fee}
+        %{
+          from: data.origin_wallet,
+          to: intermediary.pretty_address,
+          amount: per_intermediary_transfer_amount - estimated_gas_fee
+        }
       end)
 
     to_destination_transfer =
@@ -22,7 +26,7 @@ defmodule TonTrader.Transfers.Mixing.ExecutionPlan do
         %{
           from: intermediary,
           to: data.destination_wallet,
-          amount: per_intermediary_transfer_amount - (estimated_gas_fee * 2)
+          amount: per_intermediary_transfer_amount - estimated_gas_fee * 2
         }
       end)
 

@@ -1,0 +1,16 @@
+[package]
+name = "tonlibrs"
+version = "0.1.0"
+authors = []
+edition = "2021"
+
+[lib]
+name = "tonlibrs"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.34.0"
+tonlib = "0.17.6"
+tokio = { version = "1.40.0", features = ["rt", "rt-multi-thread"] }
+anyhow = "1.0.89"
