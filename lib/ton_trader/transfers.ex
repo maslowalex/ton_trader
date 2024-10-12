@@ -45,10 +45,11 @@ defmodule TonTrader.Transfers do
     {:ok, to_address} = Ton.parse_address(to_address)
     timeout = Keyword.get(opts, :timeout, 60)
     comment = Keyword.get(opts, :comment, "")
+    bounce = Keyword.get(opts, :bounce, true)
 
     [
       seqno: from_wallet.seqno,
-      bounce: true,
+      bounce: bounce,
       secret_key: from_wallet.keypair.secret_key,
       to_address: to_address,
       value: amount,

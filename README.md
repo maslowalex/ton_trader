@@ -21,6 +21,16 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 TonTrader.Transfers.transfer(wallet, "UQCWrFEjv3IDTnflpr1G3xIrgiZ9gMpO9OWezVp3P1Gm-So4", 1)
 ```
 
+## Jettons transfer is quite tricky!
+You can check out the working demo in jetton_transfer.rs file.
+
+# Note on the wallet "deployment" process (dont' skip this):
+In order for wallet to be "Activated" there is essential chain of steps needs to be performed!
+
+- First, you need to create a special kind of mnemonic, the algorithm proposed in Elixir `Ton` library is not sufficient, we are using the `tonweb-mnemonic` Javascript library for this purpose!
+
+- Secondly, for newly created wallets it is essential to send first TON to it with `bounce: false` parameter! If you don't do that the wallet will never switch to an "Active" state and you'll lost the funds you sent to it.
+
 ## Parse from txt file
 
 ```elixir

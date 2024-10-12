@@ -29,6 +29,18 @@ defmodule TonTrader.Wallets do
     end)
   end
 
+  def by_pretty_address(address) do
+    WalletCredentials
+    |> Repo.get_by(pretty_address: address)
+    |> case do
+      nil ->
+        {:error, :not_found}
+
+      %WalletCredentials{} = cred ->
+        restore_wallet(cred)
+    end
+  end
+
   @doc """
   Creates a new wallet and inserts the details of restoring it into the database.
   """
@@ -126,7 +138,7 @@ defmodule TonTrader.Wallets do
     end
   end
 
-  defp do_create_wallet(mnemonic \\ Ton.generate_mnemonic()) do
+  def do_create_wallet(mnemonic \\ generate_mnemonic()) do
     keypair = Ton.mnemonic_to_keypair(mnemonic)
     wallet = Ton.create_wallet(keypair.public_key)
 
@@ -155,5 +167,13 @@ defmodule TonTrader.Wallets do
       error ->
         error
     end
+  end
+
+  @gen_mnemonic_path Path.join([File.cwd!(), "assets", "generate_mnemonic.mjs"])
+
+  def generate_mnemonic do
+    {result, _} = System.cmd("node", [@gen_mnemonic_path])
+
+    String.trim(result)
   end
 end

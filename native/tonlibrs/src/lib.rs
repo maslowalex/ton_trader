@@ -7,13 +7,13 @@ use tonlib::contract::TonContractFactory;
 use rustler::{Env, Error, NifStruct, Resource, ResourceArc};
 use tokio::runtime::Runtime;
 
-type TonToJettonMap = HashMap<String, String>;
+type TonToJetton = HashMap<String, String>;
 
 #[rustler::nif]
 fn get_wallet_address(
-    contract_addr: String,
+    jetton_contract_addr: String,
     ton_addresses: Vec<String>,
-) -> Result<TonToJettonMap, Error> {
+) -> Result<TonToJetton, Error> {
     TonClient::set_log_verbosity_level(1);
 
     let rt = Runtime::new().unwrap();
@@ -30,9 +30,9 @@ fn get_wallet_address(
             .await
             .map_err(|_| Error::Atom("contract_factory_error"))?;
         let contract = contract_factory.get_contract(
-            &contract_addr
+            &jetton_contract_addr
                 .parse()
-                .map_err(|_| Error::Atom("contract_addr_error"))?,
+                .map_err(|_| Error::Atom("jetton_contract_addr_error"))?,
         );
 
         for ton_address in ton_addresses {

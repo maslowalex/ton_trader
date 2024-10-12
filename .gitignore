@@ -38,3 +38,5 @@ npm-debug.log
 
 # Import your wallet from this file
 mnemonic.txt
+
+data/

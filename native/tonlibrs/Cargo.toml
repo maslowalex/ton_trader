@@ -14,3 +14,4 @@ rustler = "0.34.0"
 tonlib = "0.17.6"
 tokio = { version = "1.40.0", features = ["rt", "rt-multi-thread"] }
 anyhow = "1.0.89"
+num-bigint = "0.4.6"
