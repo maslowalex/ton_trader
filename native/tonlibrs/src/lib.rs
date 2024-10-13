@@ -38,7 +38,7 @@ struct JettonTransfer {
 }
 
 #[rustler::nif]
-fn get_wallet_address(
+fn ton_to_jetton_addresses(
     jetton_contract_addr: String,
     ton_addresses: Vec<String>,
 ) -> Result<TonToJetton, Error> {

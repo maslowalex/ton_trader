@@ -9,6 +9,10 @@ defmodule TonTrader.Wallets do
 
   alias TonTrader.Wallets.Wallet
   alias TonTrader.Wallets.WalletCredentials
+  alias TonTrader.Wallets.JettonMaster
+  alias TonTrader.Wallets.JettonWallet
+
+  alias TonTrader.TonlibRs
 
   alias TonTrader.Wallets.Requests
 
@@ -71,7 +75,8 @@ defmodule TonTrader.Wallets do
         keypair: keypair,
         wallet: wallet,
         pretty_address: credentials.pretty_address,
-        seqno: credentials.seqno
+        seqno: credentials.seqno,
+        balance: credentials.balance
       }
 
       {:ok, wallet}
@@ -175,5 +180,38 @@ defmodule TonTrader.Wallets do
     {result, _} = System.cmd("node", [@gen_mnemonic_path])
 
     String.trim(result)
+  end
+
+  def derive_jetton_wallets(%JettonMaster{} = master, ton_addresses) do
+    mapping = TonlibRs.ton_to_jetton_addresses(master.address, ton_addresses)
+
+    for {ton_address, jetton_address} <- mapping do
+      case by_pretty_address(ton_address) do
+        nil ->
+          {:error, :not_found}
+
+        {:ok, ton_wallet} ->
+          insert_jetton_wallet(ton_wallet, master, jetton_address)
+      end
+    end
+  end
+
+  def insert_master_wallet(attrs) do
+    %JettonMaster{}
+    |> JettonMaster.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def insert_jetton_wallet(
+        %Wallet{} = ton_wallet,
+        %JettonMaster{} = jetton_master,
+        jetton_wallet_address
+      ) do
+    %JettonWallet{
+      jetton_master_address: jetton_master.address,
+      wallet_address: ton_wallet.raw_address
+    }
+    |> JettonWallet.changeset(%{address: jetton_wallet_address, balance: 0})
+    |> Repo.insert()
   end
 end

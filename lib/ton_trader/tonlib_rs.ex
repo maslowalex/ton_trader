@@ -7,7 +7,7 @@ defmodule TonTrader.TonlibRs do
   Given the TON addresses list and the jetton master contract address,
   returns a mapping from TON address to jetton address.
   """
-  def get_wallet_address(_contract_address, _owner_addresses),
+  def ton_to_jetton_addresses(_jetton_master_address, _ton_addresses),
     do: :erlang.nif_error(:nif_not_loaded)
 
   @doc """
