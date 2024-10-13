@@ -7,8 +7,7 @@ use tonlib::address::TonAddress;
 use tonlib::cell::BagOfCells;
 use tonlib::client::TonClient;
 use tonlib::client::TonClientInterface;
-use tonlib::contract::JettonMasterContract;
-use tonlib::contract::TonContractFactory;
+
 use tonlib::message::JettonTransferMessage;
 
 use tonlib::message::TransferMessage;
@@ -37,14 +36,9 @@ fn main() -> Result<(), Box<dyn Error>> {
         let mnemonic: Mnemonic = Mnemonic::from_str(mnemonic_str, &None).unwrap();
         let key_pair: KeyPair = mnemonic.to_key_pair().unwrap();
 
-        let jetton_master_address: TonAddress = "EQDeYzhdAtmEJwLSFxohBmN1kwuQAFD6SyqSprIGznmJ17_e"
-            .parse()
-            .unwrap();
-
         let client = TonClient::default().await?;
 
         let dest_jetton: TonAddress = "EQBkwsN4sWHm_stwIihehDvj5giCW4RILFkb7TzUdUPyz7iK".parse()?;
-        let dest: TonAddress = "EQAAodFXhgUHsx6UeEAS7Y4jD-5RU9hKG-kK4ThhXLQQcKvo".parse()?;
 
         let self_jetton_wallet_addr: TonAddress = "EQB9fnjfz5W3s6DYfclSc5PMfVStk2HvcskRQ1znLdwzDrbD".parse()?;
         let wallet = TonWallet::derive(0, WalletVersion::V4R2, &key_pair, 698_983_191)?;
@@ -68,7 +62,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let boc = BagOfCells::from_root(wrapped);
         let tx: Vec<u8> = boc.serialize(true)?;
 
-        let hash = client.send_raw_message_return_hash(tx.as_slice()).await?;
+        client.send_raw_message_return_hash(tx.as_slice()).await?;
 
         Ok::<(), Box<dyn Error>>(())
     })?;

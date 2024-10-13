@@ -1,6 +1,5 @@
 use tonlib::client::TonClient;
 use tonlib::contract::JettonMasterContract;
-use tonlib::contract::JettonWalletContract;
 use tonlib::contract::TonContractFactory;
 
 use tokio::runtime::Runtime;
@@ -18,9 +17,9 @@ async fn method_call() -> anyhow::Result<String> {
         .get_wallet_address(&"UQCvzfTWCeLcud91jaQffRC9sq-IMCYegj_mOZsbKlvYi6pl".parse()?)
         .await?;
     println!("First fetched!");
-    let wallet_address_1 = master_contract
-        .get_wallet_address(&"UQBr5PE1trssjEIjZuVyNf57Lyb-7Hcwi51d0ImdTqGAD7mU".parse()?)
-        .await?;
+    // let wallet_address_1 = master_contract
+    //     .get_wallet_address(&"UQBr5PE1trssjEIjZuVyNf57Lyb-7Hcwi51d0ImdTqGAD7mU".parse()?)
+    //     .await?;
     println!("Second fetched!");
 
     Ok(wallet_address.to_base64_url())

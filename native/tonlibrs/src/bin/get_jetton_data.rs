@@ -1,6 +1,5 @@
 use tonlib::client::TonClient;
 use tonlib::contract::JettonMasterContract;
-use tonlib::contract::JettonWalletContract;
 use tonlib::contract::TonContractFactory;
 
 use tokio::runtime::Runtime;
@@ -25,6 +24,6 @@ fn main() -> () {
     let runtime = Runtime::new().unwrap();
 
     runtime.block_on(async {
-        method_call().await;
+        method_call().await.unwrap();
     });
 }

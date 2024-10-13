@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use num_bigint::BigUint;
 use std::time::SystemTime;
 
@@ -7,7 +7,7 @@ use tonlib::cell::BagOfCells;
 use tonlib::client::TonClient;
 use tonlib::client::TonClientInterface;
 use tonlib::message::TransferMessage;
-use tonlib::mnemonic::KeyPair;
+
 use tonlib::mnemonic::Mnemonic;
 use tonlib::wallet::TonWallet;
 use tonlib::wallet::WalletVersion;
@@ -48,7 +48,7 @@ async fn create_simple_transfer() -> anyhow::Result<()> {
     let wrapped = wallet.wrap_signed_body(signed, true)?;
     let boc = BagOfCells::from_root(wrapped);
     let tx = boc.serialize(false)?;
-    let hash = client.send_raw_message_return_hash(tx.as_slice()).await?;
+    client.send_raw_message_return_hash(tx.as_slice()).await?;
 
     Ok(())
 }

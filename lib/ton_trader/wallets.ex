@@ -76,7 +76,7 @@ defmodule TonTrader.Wallets do
 
       {:ok, wallet}
     else
-      v ->
+      _ ->
         # Ecto.Adapters.SQL.query(Repo, "DELETE FROM wallet_credentials WHERE address = $1", [a])
 
         {:error, :invalid_credentials}
