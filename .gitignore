@@ -40,3 +40,5 @@ npm-debug.log
 mnemonic.txt
 
 data/
+
+priv/native/

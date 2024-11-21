@@ -17,7 +17,7 @@ defmodule TonTraderWeb.Router do
   scope "/", TonTraderWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", Live.Wallets, :index
   end
 
   # Other scopes may use custom stacks.

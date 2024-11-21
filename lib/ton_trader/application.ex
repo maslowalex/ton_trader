@@ -14,6 +14,7 @@ defmodule TonTrader.Application do
       {Phoenix.PubSub, name: TonTrader.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: TonTrader.Finch},
+      {Task.Supervisor, name: TonTrader.TaskSupervisor},
       # Start a worker by calling: TonTrader.Worker.start_link(arg)
       # {TonTrader.Worker, arg},
       # Start to serve requests, typically the last entry

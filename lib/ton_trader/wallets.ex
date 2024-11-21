@@ -20,9 +20,7 @@ defmodule TonTrader.Wallets do
   Return all existing wallets from database (derived from stored credentials).
   """
   def get_all() do
-    WalletCredentials
-    |> Repo.all()
-    |> Enum.map(fn cred ->
+    Enum.map(all_credentials(), fn cred ->
       case restore_wallet(cred) do
         {:ok, wallet} ->
           wallet
@@ -31,6 +29,10 @@ defmodule TonTrader.Wallets do
           error
       end
     end)
+  end
+
+  def all_credentials() do
+    Repo.all(WalletCredentials)
   end
 
   def by_pretty_address(address) do
@@ -59,7 +61,10 @@ defmodule TonTrader.Wallets do
   Imports wallet from seed phrase.
   """
   def import_from_mnemonic(mnemonic) do
-    do_create_wallet(mnemonic)
+    with %Wallet{} = wallet <- do_create_wallet(mnemonic),
+         {:ok, credentials} <- insert_wallet_credentials(wallet) do
+      {:ok, %{wallet: wallet, credentials: credentials}}
+    end
   end
 
   @doc """

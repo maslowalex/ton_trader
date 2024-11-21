@@ -673,4 +673,14 @@ defmodule TonTraderWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  @doc """
+  Translates TON balance to human-readable format.
+  """
+  def ton_balance(balance) when is_integer(balance) do
+    balance
+    |> Decimal.new()
+    |> Decimal.div(1_000_000_000)
+    |> Decimal.to_string(:normal)
+  end
 end
