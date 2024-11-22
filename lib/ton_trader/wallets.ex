@@ -3,7 +3,7 @@ defmodule TonTrader.Wallets do
   This module is responsible for managing the wallets.
   """
 
-  import Ecto.Query, only: [from: 2, preload: 2]
+  import Ecto.Query, warn: false
 
   alias TonTrader.Repo
 
@@ -36,6 +36,12 @@ defmodule TonTrader.Wallets do
           error
       end
     end)
+  end
+
+  def all_ton_wallet_addresses do
+    WalletCredentials
+    |> select([w], w.pretty_address)
+    |> Repo.all()
   end
 
   def all_credentials() do
@@ -202,11 +208,11 @@ defmodule TonTrader.Wallets do
 
     for {ton_address, jetton_address} <- mapping do
       case by_pretty_address(ton_address) do
-        nil ->
-          {:error, :not_found}
-
         {:ok, ton_wallet} ->
           insert_jetton_wallet(ton_wallet, master, jetton_address)
+
+        error ->
+          error
       end
     end
   end
@@ -215,6 +221,10 @@ defmodule TonTrader.Wallets do
     %JettonMaster{}
     |> JettonMaster.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def all_jetton_masters do
+    Repo.all(JettonMaster)
   end
 
   def insert_jetton_wallet(
@@ -228,5 +238,12 @@ defmodule TonTrader.Wallets do
     }
     |> JettonWallet.changeset(%{address: jetton_wallet_address, balance: 0})
     |> Repo.insert()
+  end
+
+  def get_wallets_for_master(master_name) do
+    JettonWallet
+    |> join(:inner, [jw], _ in assoc(jw, :jetton_master))
+    |> where([_, jm], jm.name == ^master_name)
+    |> Repo.all()
   end
 end

@@ -13,7 +13,6 @@ defmodule TonTrader.Repo.Migrations.CreateJettonWallets do
           references(:wallet_credentials, column: :address, on_delete: :delete_all, type: :string)
     end
 
-    create index(:jetton_wallets, [:jetton_master_address])
-    create index(:jetton_wallets, [:wallet_address], unique: true)
+    create index(:jetton_wallets, [:jetton_master_address, :wallet_address], unique: true)
   end
 end

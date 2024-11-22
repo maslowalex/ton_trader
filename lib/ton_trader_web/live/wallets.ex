@@ -36,7 +36,7 @@ defmodule TonTraderWeb.Live.Wallets do
     </.table>
 
     <.modal id="create-wallet-modal">
-      <.simple_form phx-submit="create_wallet" for={@new_wallet_form} phx-submit="restore_wallet">
+      <.simple_form for={@new_wallet_form} phx-submit="restore_wallet">
         <.input field={@new_wallet_form[:seed_phrase]} />
         <p>Enter a seed phrase</p>
         <.button type="submit" phx-click={hide_modal("create-wallet-modal")}>Import</.button>
@@ -46,8 +46,10 @@ defmodule TonTraderWeb.Live.Wallets do
   end
 
   def handle_event("restore_wallet", %{"seed_phrase" => seed_phrase}, socket) do
-    with {:ok, %{wallet: wallet}} <- Wallets.import_from_mnemonic(seed_phrase),
+    with {:ok, %{wallet: wallet, credentials: creds}} <-
+           Wallets.import_from_mnemonic(seed_phrase),
          %Wallet{} = wallet <- Wallets.prepare_for_transfer(wallet) do
+      _ = Wallets.start_wallet_server(wallet_credentials: creds)
       updated_wallets = [Map.take(wallet, [:pretty_address, :balance]) | socket.assigns.wallets]
 
       {:noreply,

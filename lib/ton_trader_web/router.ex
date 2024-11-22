@@ -18,6 +18,8 @@ defmodule TonTraderWeb.Router do
     pipe_through :browser
 
     live "/", Live.Wallets, :index
+    live "/jetton-masters", Live.JettonMasters, :index
+    live "/jetton-masters/:jetton/wallets", Live.JettonMasters.Wallets, :index
   end
 
   # Other scopes may use custom stacks.

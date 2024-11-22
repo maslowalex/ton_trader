@@ -9,6 +9,10 @@ defmodule TonTrader.Wallets.JettonMaster do
     field :name, :string
   end
 
+  def new do
+    changeset(%__MODULE__{}, %{})
+  end
+
   @doc false
   def changeset(master_wallet, attrs) do
     master_wallet
