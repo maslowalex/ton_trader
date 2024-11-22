@@ -24,6 +24,7 @@ defmodule TonTrader.Wallets.WalletCredentials do
     |> cast(attrs, [:pretty_address, :mnemonic, :address, :seqno, :balance])
     |> validate_mnemonic()
     |> validate_required([:pretty_address, :mnemonic, :address, :seqno])
+    |> unique_constraint(:address, name: "wallet_credentials_pkey")
   end
 
   def validate_mnemonic(changeset) do

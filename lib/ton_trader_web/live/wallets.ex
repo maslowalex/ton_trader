@@ -3,15 +3,27 @@ defmodule TonTraderWeb.Live.Wallets do
 
   alias TonTrader.Wallets
   alias TonTrader.Wallets.Wallet
+  alias TonTrader.Wallets.Registry
 
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      for wallet_credential <- Wallets.all_credentials() do
-        do_restore_wallet(wallet_credential)
-      end
-    end
+    socket =
+      if connected?(socket) do
+        wallets_short_info =
+          for wallet_pretty_address <- Registry.all_walets() do
+            with {:ok, %{balance: _} = meta} <- Registry.get_meta(wallet_pretty_address) do
+              Map.merge(meta, %{pretty_address: wallet_pretty_address})
+            else
+              _ ->
+                %{pretty_address: wallet_pretty_address, balance: nil}
+            end
+          end
 
-    {:ok, assign(socket, wallets: [], new_wallet_form: to_form(%{}))}
+        assign(socket, :wallets, sort_wallets(wallets_short_info))
+      else
+        assign(socket, :wallets, [])
+      end
+
+    {:ok, assign(socket, new_wallet_form: to_form(%{}))}
   end
 
   def render(assigns) do
@@ -36,30 +48,20 @@ defmodule TonTraderWeb.Live.Wallets do
   def handle_event("restore_wallet", %{"seed_phrase" => seed_phrase}, socket) do
     with {:ok, %{wallet: wallet}} <- Wallets.import_from_mnemonic(seed_phrase),
          %Wallet{} = wallet <- Wallets.prepare_for_transfer(wallet) do
+      updated_wallets = [Map.take(wallet, [:pretty_address, :balance]) | socket.assigns.wallets]
+
       {:noreply,
-       assign(socket, wallets: [wallet | socket.assigns.wallets], new_wallet_form: to_form(%{}))}
+       assign(socket,
+         wallets: sort_wallets(updated_wallets),
+         new_wallet_form: to_form(%{})
+       )}
     else
       error ->
         {:noreply, put_flash(socket, :error, "Failed to create wallet: #{inspect(error)}")}
     end
   end
 
-  def handle_info({_, {:ok, %Wallet{} = wallet}}, socket) do
-    wallets = [wallet | socket.assigns.wallets]
-
-    {:noreply, assign(socket, wallets: Enum.sort_by(wallets, & &1.balance, :desc))}
-  end
-
-  def handle_info({:DOWN, _, _, _, _}, socket) do
-    {:noreply, socket}
-  end
-
-  defp do_restore_wallet(wallet_credential) do
-    Task.Supervisor.async_nolink(TonTrader.TaskSupervisor, fn ->
-      with {:ok, wallet} <- Wallets.restore_wallet(wallet_credential),
-           %Wallet{} = wallet <- Wallets.prepare_for_transfer(wallet) do
-        {:ok, wallet}
-      end
-    end)
+  defp sort_wallets(wallets) do
+    Enum.sort_by(wallets, & &1.balance, :desc)
   end
 end

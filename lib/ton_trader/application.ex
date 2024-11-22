@@ -19,7 +19,8 @@ defmodule TonTrader.Application do
       # {TonTrader.Worker, arg},
       # Start to serve requests, typically the last entry
       TonTraderWeb.Endpoint,
-      TonTrader.RateLimiter
+      TonTrader.RateLimiter,
+      TonTrader.Wallets.Supervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

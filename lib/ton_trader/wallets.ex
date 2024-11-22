@@ -3,7 +3,7 @@ defmodule TonTrader.Wallets do
   This module is responsible for managing the wallets.
   """
 
-  import Ecto.Query, only: [from: 2]
+  import Ecto.Query, only: [from: 2, preload: 2]
 
   alias TonTrader.Repo
 
@@ -15,6 +15,13 @@ defmodule TonTrader.Wallets do
   alias TonTrader.TonlibRs
 
   alias TonTrader.Wallets.Requests
+
+  def start_wallet_server(opts) do
+    DynamicSupervisor.start_child(
+      TonTrader.WalletsDynamicSupervisor,
+      {TonTrader.Wallets.Server, opts}
+    )
+  end
 
   @doc """
   Return all existing wallets from database (derived from stored credentials).
@@ -32,7 +39,9 @@ defmodule TonTrader.Wallets do
   end
 
   def all_credentials() do
-    Repo.all(WalletCredentials)
+    WalletCredentials
+    |> preload([:jetton_wallets])
+    |> Repo.all()
   end
 
   def by_pretty_address(address) do
@@ -148,6 +157,7 @@ defmodule TonTrader.Wallets do
     end
   end
 
+  @spec do_create_wallet(binary()) :: struct()
   def do_create_wallet(mnemonic \\ generate_mnemonic()) do
     keypair = Ton.mnemonic_to_keypair(mnemonic)
     wallet = Ton.create_wallet(keypair.public_key)
