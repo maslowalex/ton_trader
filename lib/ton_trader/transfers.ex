@@ -5,15 +5,15 @@ defmodule TonTrader.Transfers do
 
   alias TonTrader.Transfers.Requests
 
-  def sync_balance(wallet) do
-    wallet.pretty_address
+  def sync_balance(wallet_address) do
+    wallet_address
     |> Requests.get_balance()
     |> TonTrader.RateLimiter.request()
     |> case do
       {:ok, %{status: 200, body: body}} ->
         balance = body |> Jason.decode!() |> Map.fetch!("result") |> String.to_integer()
 
-        %{wallet | balance: balance}
+        {:ok, balance}
 
       {_, reason} ->
         {:error, reason}
