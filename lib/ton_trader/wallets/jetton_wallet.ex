@@ -5,6 +5,7 @@ defmodule TonTrader.Wallets.JettonWallet do
   @foreign_key_type :binary
   @primary_key {:address, :binary, autogenerate: false}
   schema "jetton_wallets" do
+    field :raw_address, :string
     field :balance, :decimal
 
     belongs_to :jetton_master, TonTrader.Wallets.JettonMaster,
@@ -19,7 +20,7 @@ defmodule TonTrader.Wallets.JettonWallet do
   @doc false
   def changeset(jetton_wallet, attrs) do
     jetton_wallet
-    |> cast(attrs, [:address, :balance])
-    |> validate_required([:address, :balance])
+    |> cast(attrs, [:address, :raw_address, :balance])
+    |> validate_required([:address, :raw_address, :balance])
   end
 end

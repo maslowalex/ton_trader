@@ -23,4 +23,18 @@ defmodule TonTrader.Wallets.Requests do
       json_payload
     )
   end
+
+  def get_jetton_wallet_balances(jetton_master_address, ton_addresses)
+      when is_list(ton_addresses) do
+    query =
+      Enum.reduce(ton_addresses, "?jetton_address=#{jetton_master_address}", fn address, acc ->
+        acc <> "&owner_address=#{address}"
+      end)
+
+    Finch.build(
+      :get,
+      "https://toncenter.com/api/v3/jetton/wallets" <> query,
+      [{"accept", "application/json"}]
+    )
+  end
 end

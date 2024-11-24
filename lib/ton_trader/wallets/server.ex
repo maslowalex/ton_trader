@@ -1,12 +1,15 @@
 defmodule TonTrader.Wallets.Server do
   use GenServer
 
+  require Logger
+
   alias TonTrader.Wallets
+  alias TonTrader.Transfers
   alias TonTrader.Wallets.Wallet
   alias TonTrader.Wallets.Registry
 
   defmodule State do
-    defstruct [:wallet, :last_update_at]
+    defstruct [:wallet, :last_update_at, :jetton_wallets]
   end
 
   def start_link(opts) do
@@ -26,10 +29,35 @@ defmodule TonTrader.Wallets.Server do
          %Wallet{} = wallet <- Wallets.prepare_for_transfer(wallet) do
       :ok = Registry.put_meta(wallet.pretty_address, Map.take(wallet, [:balance]))
 
-      {:noreply, %State{wallet: wallet, last_update_at: NaiveDateTime.utc_now()}}
+      {:noreply,
+       %State{
+         wallet: wallet,
+         last_update_at: NaiveDateTime.utc_now(),
+         jetton_wallets: wallet_credentials.jetton_wallets
+       }, {:continue, :sync_jetton_balances}}
     else
       error ->
         {:stop, {:shutdown, error}, wallet_credentials}
     end
+  end
+
+  def handle_continue(:sync_jetton_balances, state) do
+    jetton_wallets =
+      Enum.map(state.jetton_wallets, fn jetton_wallet ->
+        case Transfers.sync_balance(jetton_wallet.address) do
+          {:ok, balance} ->
+            {:ok, jetton_wallet} =
+              Wallets.update_jetton_wallet(jetton_wallet, %{balance: balance})
+
+            jetton_wallet
+
+          error ->
+            Logger.error("Failed to sync jetton wallet balance: #{inspect(error)}")
+
+            jetton_wallet
+        end
+      end)
+
+    {:noreply, %{state | jetton_wallets: jetton_wallets}}
   end
 end

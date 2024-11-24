@@ -684,5 +684,11 @@ defmodule TonTraderWeb.CoreComponents do
     |> Decimal.to_string(:normal)
   end
 
+  def ton_balance(%Decimal{} = balance) do
+    balance
+    |> Decimal.div(1_000_000_000)
+    |> Decimal.to_string(:normal)
+  end
+
   def ton_balance(_), do: "Unknown"
 end

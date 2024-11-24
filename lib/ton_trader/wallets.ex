@@ -156,10 +156,10 @@ defmodule TonTrader.Wallets do
     end)
   end
 
-  def prepare_for_transfer(%Wallet{} = wallet) do
+  def prepare_for_transfer(%Wallet{pretty_address: pretty_address} = wallet) do
     with {:ok, wallet} <- sync_seqno(wallet),
-         {:ok, wallet} <- TonTrader.Transfers.sync_balance(wallet) do
-      wallet
+         {:ok, balance} <- TonTrader.Transfers.sync_balance(pretty_address) do
+      Map.put(wallet, :balance, balance)
     end
   end
 
@@ -232,12 +232,21 @@ defmodule TonTrader.Wallets do
         %JettonMaster{} = jetton_master,
         jetton_wallet_address
       ) do
+    {:ok, raw_address} = Ton.Address.friendly_address_to_raw_address(jetton_wallet_address)
+
     %JettonWallet{
       jetton_master_address: jetton_master.address,
-      wallet_address: ton_wallet.raw_address
+      wallet_address: ton_wallet.raw_address,
+      raw_address: raw_address
     }
     |> JettonWallet.changeset(%{address: jetton_wallet_address, balance: 0})
     |> Repo.insert()
+  end
+
+  def update_jetton_wallet(jetton_wallet, attrs) do
+    jetton_wallet
+    |> JettonWallet.changeset(attrs)
+    |> Repo.update()
   end
 
   def get_wallets_for_master(master_name) do

@@ -5,6 +5,7 @@ defmodule TonTrader.Repo.Migrations.CreateJettonWallets do
     create table(:jetton_wallets, primary_key: false) do
       add :address, :binary, primary_key: true
       add :balance, :decimal, default: 0, null: false
+      add :raw_address, :binary, null: false
 
       add :jetton_master_address,
           references(:jetton_masters, column: :address, on_delete: :delete_all, type: :bytea)
